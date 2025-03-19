@@ -176,7 +176,7 @@ const Index = () => {
       </main>
       
       <footer className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-        <p>© 2023 KidLearn - Game Edukasi untuk Anak TK</p>
+        <p>© 2023 KidLearn - Akmal Bagus</p>
       </footer>
     </div>
   );
