@@ -11,6 +11,39 @@ import LetterGame from '../components/LetterGame';
 import ShapeGame from '../components/ShapeGame';
 import AnimatedTransition from '../components/AnimatedTransition';
 
+// Define new animation styles in a style tag
+const animationStyles = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  @keyframes float-fast {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  @keyframes float-delayed {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0); }
+  }
+
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  .animate-float-fast {
+    animation: float-fast 2s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 3s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+`;
+
 type GameType = 'number' | 'letter' | 'shape' | null;
 
 const Index = () => {
@@ -95,6 +128,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      {/* Add the animation styles */}
+      <style>{animationStyles}</style>
+      
       <AnimatedBackground />
       <Header />
       

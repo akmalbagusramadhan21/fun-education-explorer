@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AnimatedTransition from './AnimatedTransition';
+import playSound from '../utils/audio';
 
 interface LetterGameProps {
   onComplete: (score: number) => void;
@@ -14,6 +15,7 @@ const LetterGame: React.FC<LetterGameProps> = ({ onComplete }) => {
   const [maxAttempts] = useState<number>(5);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // List of common vowels and consonants for kindergarten
   const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
@@ -44,6 +46,7 @@ const LetterGame: React.FC<LetterGameProps> = ({ onComplete }) => {
     setOptions(generateOptions(newLetter));
     setIsCorrect(null);
     setSelectedOption(null);
+    setShowCelebration(false);
   };
 
   // Initialize the game
@@ -59,7 +62,11 @@ const LetterGame: React.FC<LetterGameProps> = ({ onComplete }) => {
     setIsCorrect(correct);
     
     if (correct) {
+      playSound('correct');
       setScore(prevScore => prevScore + 1);
+      setShowCelebration(true);
+    } else {
+      playSound('incorrect');
     }
     
     setAttempts(prevAttempts => prevAttempts + 1);
@@ -67,6 +74,7 @@ const LetterGame: React.FC<LetterGameProps> = ({ onComplete }) => {
     // Wait before moving to next question
     setTimeout(() => {
       if (attempts + 1 >= maxAttempts) {
+        playSound('complete');
         onComplete(score + (correct ? 1 : 0));
       } else {
         startNewRound();
@@ -88,12 +96,30 @@ const LetterGame: React.FC<LetterGameProps> = ({ onComplete }) => {
       </AnimatedTransition>
 
       <AnimatedTransition show={true} type="fade">
-        <div className="flex justify-center mb-10">
-          <div className="w-32 h-32 md:w-40 md:h-40 flex items-center justify-center rounded-2xl bg-gradient-to-br from-kid-pink to-kid-purple shadow-lg">
+        <div className="flex justify-center mb-10 relative">
+          <div className={`w-32 h-32 md:w-40 md:h-40 flex items-center justify-center rounded-2xl bg-gradient-to-br from-kid-pink to-kid-purple shadow-lg ${isCorrect === true ? 'animate-bounce-gentle' : ''}`}>
             <span className="text-6xl md:text-7xl font-bold text-white">
               {currentLetter}
             </span>
           </div>
+          
+          {/* Celebration particles when correct */}
+          {showCelebration && (
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 left-1/4 animate-float-fast">
+                <div className="w-6 h-6 bg-kid-yellow rounded-full opacity-80" />
+              </div>
+              <div className="absolute top-1/4 right-1/4 animate-float-delayed">
+                <div className="w-4 h-4 bg-kid-green rounded-full opacity-80" />
+              </div>
+              <div className="absolute bottom-1/4 left-1/3 animate-float-fast">
+                <div className="w-5 h-5 bg-kid-orange rounded-full opacity-80" />
+              </div>
+              <div className="absolute bottom-0 right-1/3 animate-float-delayed">
+                <div className="w-7 h-7 bg-kid-pink rounded-full opacity-80" />
+              </div>
+            </div>
+          )}
         </div>
       </AnimatedTransition>
 
@@ -104,8 +130,8 @@ const LetterGame: React.FC<LetterGameProps> = ({ onComplete }) => {
               className={`w-full py-4 rounded-xl text-2xl font-bold transition-all duration-300 
                 ${selectedOption === option 
                   ? isCorrect 
-                    ? 'bg-kid-green text-white correct-answer' 
-                    : 'bg-kid-red text-white wrong-answer'
+                    ? 'bg-kid-green text-white correct-answer animate-pulse' 
+                    : 'bg-kid-red text-white wrong-answer animate-shake'
                   : 'bg-white shadow-md hover:shadow-lg hover:-translate-y-1'
                 }`}
               onClick={() => handleOptionClick(option)}
@@ -120,7 +146,7 @@ const LetterGame: React.FC<LetterGameProps> = ({ onComplete }) => {
       <AnimatedTransition show={isCorrect !== null} type="slide-up">
         <div className="text-center">
           {isCorrect === true && (
-            <p className="text-kid-green font-bold text-xl">Benar sekali!</p>
+            <p className="text-kid-green font-bold text-xl animate-bounce-gentle">Benar sekali!</p>
           )}
           {isCorrect === false && (
             <p className="text-kid-red font-bold text-xl">
