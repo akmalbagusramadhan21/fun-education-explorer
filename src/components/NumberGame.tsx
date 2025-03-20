@@ -147,7 +147,7 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
         </div>
       </AnimatedTransition>
 
-      <div className="grid grid-cols-3 gap-4 mb-8 w-full max-w-md">
+      <div className="grid grid-cols-1 gap-4 mb-8 w-full max-w-md">
         {options.map((option, index) => (
           <AnimatedTransition key={index} show={true} type="slide-up" duration={300 + index * 100}>
             <button
