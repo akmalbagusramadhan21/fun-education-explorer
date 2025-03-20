@@ -8,28 +8,42 @@ interface NumberGameProps {
 }
 
 const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
-  const [currentNumber, setCurrentNumber] = useState<number>(0);
-  const [options, setOptions] = useState<number[]>([]);
+  const [currentPlanet, setCurrentPlanet] = useState<string>("");
+  const [options, setOptions] = useState<string[]>([]);
   const [score, setScore] = useState<number>(0);
   const [attempts, setAttempts] = useState<number>(0);
   const [maxAttempts] = useState<number>(5);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
-  // Generate a random number between 1 and 10
-  const generateRandomNumber = () => {
-    return Math.floor(Math.random() * 10) + 1;
+  // Define solar system planets and their images
+  const planets = [
+    { name: "Merkurius", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Mercury_in_color_-_Prockter07-edit1.jpg/600px-Mercury_in_color_-_Prockter07-edit1.jpg" },
+    { name: "Venus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Venus-real_color.jpg/600px-Venus-real_color.jpg" },
+    { name: "Bumi", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/The_Blue_Marble_%28remastered%29.jpg/600px-The_Blue_Marble_%28remastered%29.jpg" },
+    { name: "Mars", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/600px-OSIRIS_Mars_true_color.jpg" },
+    { name: "Jupiter", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/600px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg" },
+    { name: "Saturnus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/600px-Saturn_during_Equinox.jpg" },
+    { name: "Uranus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Uranus2.jpg/600px-Uranus2.jpg" },
+    { name: "Neptunus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/600px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg" },
+  ];
+
+  // Get a random planet
+  const getRandomPlanet = () => {
+    const randomIndex = Math.floor(Math.random() * planets.length);
+    return planets[randomIndex];
   };
 
   // Generate options including the correct answer
-  const generateOptions = (correctAnswer: number) => {
-    const optionsArray = [correctAnswer];
+  const generateOptions = (correctPlanet: string) => {
+    const optionsArray = [correctPlanet];
+    const planetNames = planets.map(p => p.name);
     
     while (optionsArray.length < 3) {
-      const randomNum = generateRandomNumber();
-      if (!optionsArray.includes(randomNum)) {
-        optionsArray.push(randomNum);
+      const randomPlanetName = planetNames[Math.floor(Math.random() * planetNames.length)];
+      if (!optionsArray.includes(randomPlanetName)) {
+        optionsArray.push(randomPlanetName);
       }
     }
     
@@ -38,9 +52,9 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
   };
 
   const startNewRound = () => {
-    const newNumber = generateRandomNumber();
-    setCurrentNumber(newNumber);
-    setOptions(generateOptions(newNumber));
+    const newPlanet = getRandomPlanet();
+    setCurrentPlanet(newPlanet.name);
+    setOptions(generateOptions(newPlanet.name));
     setIsCorrect(null);
     setSelectedOption(null);
     setShowCelebration(false);
@@ -51,11 +65,11 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
     startNewRound();
   }, []);
 
-  const handleOptionClick = (option: number) => {
+  const handleOptionClick = (option: string) => {
     if (selectedOption !== null) return; // Prevent multiple selections
     
     setSelectedOption(option);
-    const correct = option === currentNumber;
+    const correct = option === currentPlanet;
     setIsCorrect(correct);
     
     if (correct) {
@@ -84,6 +98,12 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
     }, 1500);
   };
 
+  // Get the current planet's image
+  const getCurrentPlanetImage = () => {
+    const planet = planets.find(p => p.name === currentPlanet);
+    return planet ? planet.image : "";
+  };
+
   return (
     <div className="flex flex-col items-center">
       <AnimatedTransition show={true} type="fade">
@@ -92,17 +112,19 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
             Pertanyaan {attempts + 1} dari {maxAttempts}
           </span>
           <h2 className="text-2xl md:text-3xl font-bold">
-            Temukan angka berapa ini?
+            Planet apakah ini?
           </h2>
         </div>
       </AnimatedTransition>
 
       <AnimatedTransition show={true} type="fade">
         <div className="flex justify-center mb-10 relative">
-          <div className={`w-32 h-32 md:w-40 md:h-40 flex items-center justify-center rounded-2xl bg-gradient-to-br from-kid-blue to-kid-purple shadow-lg ${isCorrect === true ? 'animate-bounce-gentle' : ''}`}>
-            <span className="text-6xl md:text-7xl font-bold text-white">
-              {currentNumber}
-            </span>
+          <div className={`w-48 h-48 md:w-56 md:h-56 flex items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-kid-blue to-kid-purple shadow-lg ${isCorrect === true ? 'animate-bounce-gentle' : ''}`}>
+            <img 
+              src={getCurrentPlanetImage()} 
+              alt={`Planet ${currentPlanet}`} 
+              className="w-full h-full object-cover"
+            />
           </div>
           
           {/* Celebration particles when correct */}
@@ -129,7 +151,7 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
         {options.map((option, index) => (
           <AnimatedTransition key={index} show={true} type="slide-up" duration={300 + index * 100}>
             <button
-              className={`w-full py-4 rounded-xl text-2xl font-bold transition-all duration-300 
+              className={`w-full py-4 rounded-xl text-lg font-bold transition-all duration-300 
                 ${selectedOption === option 
                   ? isCorrect 
                     ? 'bg-kid-green text-white correct-answer animate-pulse' 
@@ -152,7 +174,7 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
           )}
           {isCorrect === false && (
             <p className="text-kid-red font-bold text-xl">
-              Jawaban yang benar adalah {currentNumber}
+              Jawaban yang benar adalah {currentPlanet}
             </p>
           )}
         </div>

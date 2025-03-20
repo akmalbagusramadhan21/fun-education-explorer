@@ -151,8 +151,8 @@ const Index = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               <GameCard
-                title="Belajar Angka"
-                description="Kenali angka 1-10 dengan cara yang menyenangkan"
+                title="Tata Surya"
+                description="Mengenal planet-planet di tata surya kita"
                 icon={<NumberIcon className="w-16 h-16" />}
                 color="blue"
                 delay={100}
