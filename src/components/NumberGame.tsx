@@ -59,7 +59,12 @@ const NumberGame: React.FC<NumberGameProps> = ({ onComplete }) => {
     setIsCorrect(correct);
     
     if (correct) {
+      // Play both sounds for correct answer
       playSound('correct');
+      // Add a slight delay for the voice sound
+      setTimeout(() => {
+        playSound('yes-correct');
+      }, 300);
       setScore(prevScore => prevScore + 1);
       setShowCelebration(true);
     } else {

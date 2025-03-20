@@ -1,6 +1,6 @@
 
 // Simple utility to play sound effects for correct and incorrect answers
-const playSound = (type: 'correct' | 'incorrect' | 'complete') => {
+const playSound = (type: 'correct' | 'incorrect' | 'complete' | 'yes-correct') => {
   let soundUrl = '';
   
   switch (type) {
@@ -12,6 +12,9 @@ const playSound = (type: 'correct' | 'incorrect' | 'complete') => {
       break;
     case 'complete':
       soundUrl = 'https://assets.mixkit.co/active_storage/sfx/1493/1493.wav'; // Celebration sound
+      break;
+    case 'yes-correct':
+      soundUrl = 'https://assets.mixkit.co/active_storage/sfx/2691/2691.wav'; // "Yes" voice sound
       break;
     default:
       return;
